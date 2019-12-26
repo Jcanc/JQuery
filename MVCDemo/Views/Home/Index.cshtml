@@ -1,0 +1,163 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<html>
+<head>
+    <meta charset="utf-8">
+    <script src="lib/jquery/dist/jquery.js"></script>
+    <title>jquery发送请求</title>
+</head>
+<body>
+    <button id="getlistbtn">GetList</button>
+    <hr />
+    tid:<input id="tid" type="text" />
+    <button id="getdetailbtn">GetById</button>
+    <hr />
+    name:<input id="name" type="text" />
+    sex:<input id="sex" type="text" />
+    rich:<input id="rich" type="number" min="0" max="1000000" step="1" />
+    <button id="addbtn">Add</button>
+    <hr />
+    tid:<input id="editid" type="text" />
+    name:<input id="editname" type="text" />
+    sex:<input id="editsex" type="text" />
+    rich:<input id="editrich" type="number" min="0" max="1000000" step="1" />
+    <button id="editbtn">Edit</button>
+    <hr />
+    tid:<input id="deleteid" type="text" />
+    <button id="deletebtn">Delete</button>
+    <hr />
+    <div id="data"></div>
+    <div id="msg"></div>
+
+    <!-- js脚本 -->
+    <script>
+        $(function () {
+            var token =
+                "Bearer eyJhbGciOiJSUzI1NiIsImtpZCI6IkJBRTNDRDE1OUFDRjI5OEQzMzFBREU0Q0FDQUQwRUNDQzAyRDRFQTAiLCJ0eXAiOiJKV1QiLCJ4NXQiOiJ1dVBORlpyUEtZMHpHdDVNckswT3pNQXRUcUEifQ.eyJuYmYiOjE1NzczNTEzMDUsImV4cCI6MTU3NzM4MDEwNSwiaXNzIjoiaHR0cHM6Ly9odWktbS5kZ2p5Lm5ldCIsImF1ZCI6WyJodHRwczovL2h1aS1tLmRnankubmV0L3Jlc291cmNlcyIsIlBvcnRhbEFwaSIsImRnanlhcGkiLCJQZXJtaXNzaW9uQXBpIiwiVXNlckluZm9XZWJBUEkiLCJHSkZhbWlseUFQSSJdLCJjbGllbnRfaWQiOiJwZXJtaXNzaW9uIiwic3ViIjoiQjIzM0JDOEJDNjEyNDU4OTg5NDVGMzY3Q0RFODA5NDkiLCJhdXRoX3RpbWUiOjE1NzczNTEyNjAsImlkcCI6ImxvY2FsIiwibmFtZSI6ImRzYnl3eWV5eXhnc19hZG1pbiIsInByZWZlcnJlZF91c2VybmFtZSI6ImRzYnl3eWV5eXhnc19hZG1pbiIsIm5pY2tuYW1lIjoi566h55CG5ZGYIiwic3NpZCI6IjM3NWM3MjM3MWUwODI1ZDcwMjlhYzgzYTVkYzhjZmI2IiwiZW1haWwiOiIiLCJzY29wZSI6WyJvcGVuaWQiLCJwcm9maWxlIiwiZW1haWwiLCJQb3J0YWxBcGkiLCJkZ2p5YXBpIiwiUGVybWlzc2lvbkFwaSIsIlVzZXJJbmZvV2ViQVBJIiwiR0pGYW1pbHlBUEkiXSwiYW1yIjpbInB3ZCJdfQ.CEFWWyhmD9MMvX-a1oiiOccLsq07SU9wEaMCKptTblGx4wkTzG-inuypopYSlY8HgL1mEhxNnNxZ_h-DVlaAFX6BGMEUoPr53bUUq7Rl30xhMxRU7mJAsTdGIXFE6oLC1asTjH8IKjtHjHkXiHw5_AxoxUtgs1UBx3WUhxkGJwo4qO_1cleZpnnNcakG1UfAcAB0w8NWQ6XXsD6JACpSt67kf_GDGX8jM0CTlZuufvhlgTYg16m8q0o_dHOCud_MuK0MqOyHuq61dJM6Kl0OWh6bYg4gCOHBe0U20L8OabB-arV6UsSr9V5qU407T9cSDmElKAicdlW0z0mXySbGHw";
+            $('#getlistbtn').click(function () {
+                $.ajax({
+                    type: "GET",
+                    url: "http://localhost:8007/v1/TEST",
+                    dataType: 'json',
+                    headers: { "Authorization": token },
+                    success: function (result) {
+                        // 把返回的文本填充到d-text中
+                        if (result.code == "0") {
+                            $('#data').html(JSON.stringify(result.data));
+                            $('#msg').html(result.msg);
+                        } else {
+                            $('#msg').html(result.msg);
+                        }
+                    },
+                    error: function (err) {
+                        $('#msg').html("请求失败。" + err);
+                    }
+                });
+            });
+
+            $('#getdetailbtn').click(function () {
+                var tid = $('#tid').val();
+                $.ajax({
+                    type: "GET",
+                    url: "http://localhost:8007/v1/TEST/" + tid,
+                    dataType: 'json',
+                    headers: { "Authorization": token },
+                    success: function (result) {
+                        // 把返回的文本填充到d-text中
+                        if (result.code == "0") {
+                            $('#data').html("data:" + JSON.stringify(result.data));
+                            $('#msg').html("msg:" + result.msg);
+                        } else {
+                            $('#msg').html("msg:" + result.msg);
+                        }
+                    },
+                    error: function (err) {
+                        $('#msg').html("请求失败。" + err);
+                    }
+                });
+            });
+
+            $('#addbtn').click(function () {
+                var newData = {
+                    tname: $('#name').val(),
+                    sex: $('#sex').val(),
+                    rich: $('#rich').val()
+                };
+                $.ajax(
+                    {
+                        url: "http://localhost:8007/v1/TEST",
+                        type: "POST",
+                        data: JSON.stringify(newData),
+                        contentType: "application/json",
+                        dataType: "json",
+                        headers: { "Authorization": token },
+                        success: function (result) {
+                            if (result.code == "0") {
+                                $('#data').html("data:" + JSON.stringify(result.data));
+                                $('#msg').html("msg:" + result.msg);
+                            } else {
+                                $('#msg').html("msg:" + result.msg);
+                            }
+                        },
+                        error: function (err) {
+                            $('#msg').html("请求失败。" + err);
+                        }
+                    }
+                );
+            });
+
+            $('#editbtn').click(function () {
+                var updateData = {
+                    tid: $('#editid').val(),
+                    tname: $('#editname').val(),
+                    sex: $('#editsex').val(),
+                    rich: $('#editrich').val()
+                };
+                $.ajax({
+                    url: "http://localhost:8007/v1/TEST",
+                    type: "PUT",
+                    data: JSON.stringify(updateData),
+                    contentType: "application/json",
+                    dataType: "json",
+                    headers: { "Authorization": token },
+                    success: function (result) {
+                        if (result.code == "0") {
+                            $('#data').html("data:" + JSON.stringify(result.data));
+                            $('#msg').html("msg:" + result.msg);
+                        } else {
+                            $('#msg').html("msg:" + result.msg);
+                        }
+                    },
+                    error: function (err) {
+                        $('#msg').html("请求失败。" + err);
+                    }
+                });
+            });
+
+            $('#deletebtn').click(function () {
+                var tid = $('#deleteid').val();
+                console.log(tid);
+                $.ajax({
+                    url: "http://localhost:8007/v1/TEST/" + tid,
+                    type: "DELETE",
+                    contentType: "application/json",
+                    dataType: "json",
+                    headers: { "Authorization": token },
+                    success: function (result) {
+                        if (result.code == "0") {
+                            $('#msg').html("msg:" + result.msg);
+                        } else {
+                            $('#msg').html("msg:" + result.msg);
+                        }
+                    },
+                    error: function (err) {
+                        $('#msg').html("请求失败。" + err);
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
